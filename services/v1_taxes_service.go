@@ -21,6 +21,23 @@ func V1TaxesServiceHandler() (V1TaxesService) {
 }
 
 func (service *V1TaxesService) CalculateTax(requestObject objects.V1TaxesObjectRequest) (objects.V1TaxesObjectResponse, error) {
+	return service.calculateTax(requestObject)
+}
+
+func (service *V1TaxesService) CalculateTaxBulk(requestObject []objects.V1TaxesObjectRequest) ([]objects.V1TaxesObjectResponse, error) {
+
+	var response []objects.V1TaxesObjectResponse
+
+	for _, element := range requestObject {
+		result, _ := service.calculateTax(element)
+		response = append(response, result)
+	}
+
+	return response, nil
+
+}
+
+func (service *V1TaxesService) calculateTax(requestObject objects.V1TaxesObjectRequest) (objects.V1TaxesObjectResponse, error) {
 
 	var err error
 

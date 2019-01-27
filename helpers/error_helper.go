@@ -16,10 +16,12 @@ func ErrorHelperHandler() (ErrorHelper) {
 
 func (handler *ErrorHelper) HTTPResponseError(context *gin.Context, e error, defaultErrorCode int) {
 
-	switch e.Error() {
-	case "record not found":
-		defaultErrorCode = constants.ResourceNotFound
-		break
+	if nil != e {
+		switch e.Error() {
+		case "record not found":
+			defaultErrorCode = constants.ResourceNotFound
+			break
+		}
 	}
 
 	errorConstant := constants.GetErrorConstant(defaultErrorCode)
@@ -28,10 +30,11 @@ func (handler *ErrorHelper) HTTPResponseError(context *gin.Context, e error, def
 		"message": errorConstant.Message,
 	})
 
-	if _, ok := e.(*mysql.MySQLError); !ok {
-		fmt.Println(e)
+	if nil != e {
+		if _, ok := e.(*mysql.MySQLError); !ok {
+			fmt.Println(e)
+		}
+		panic(e)
 	}
-
-	panic(e)
 
 }
