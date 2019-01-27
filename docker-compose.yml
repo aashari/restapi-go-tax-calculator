@@ -1,0 +1,49 @@
+version: '3.3'
+services:
+  golang_service:
+    build:
+      context: ./config
+      dockerfile: golang-service
+    container_name: golang_service
+    ports:
+    - '3000:3000'
+    volumes:
+    - './src:/my_app:rw'
+    - './storage/go/src:/go/src'
+    - './config:/config:rw'
+    networks:
+      shopee_network:
+        ipv4_address: 172.16.230.10
+    working_dir: "/my_app"
+    command: ["sh", "-c", "go run main.go"]
+  mysql_service:
+    build:
+      context: ./config
+      dockerfile: mysql-service
+    container_name: mysql_service
+    environment:
+      MYSQL_DATABASE: "shopee_database"
+      MYSQL_USER: "shopee_username"
+      MYSQL_PASSWORD: "shopee_password"
+      MYSQL_ROOT_PASSWORD: "shopee_password"
+    ports:
+    - '3306:3306'
+    expose:
+    - '3306'
+    volumes:
+    - './storage:/var/lib/mysql'
+    - './storage/go/src:/go/src'
+    - './src:/my_app:rw'
+    - './config:/config:rw'
+    networks:
+      shopee_network:
+        ipv4_address: 172.16.230.11
+networks:
+  shopee_network:
+    driver: bridge
+    driver_opts:
+      com.docker.network.enable_ipv6: 'false'
+    ipam:
+      driver: default
+      config:
+      - subnet: 172.16.230.0/24

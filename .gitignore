@@ -1,5 +1,4 @@
-storage/logs
-.env
+storage
 .idea
 swagger.json
 vendor
