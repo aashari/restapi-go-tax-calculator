@@ -29,7 +29,10 @@ func (service *V1TaxesService) CalculateTaxBulk(requestObject []objects.V1TaxesO
 	var response []objects.V1TaxesObjectResponse
 
 	for _, element := range requestObject {
-		result, _ := service.calculateTax(element)
+		result, err := service.calculateTax(element)
+		if err != nil {
+			return []objects.V1TaxesObjectResponse{}, err
+		}
 		response = append(response, result)
 	}
 
